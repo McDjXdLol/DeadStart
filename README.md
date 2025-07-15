@@ -1,64 +1,88 @@
-# 🎮 CSimpleGame
+# 🎮 DeadStart
 
-An experimental 2D platformer built in C# using **Raylib-cs**.  
-This is a work-in-progress sandbox project made for learning Raylib and testing basic gameplay mechanics.
+An experimental 2D platformer built in C# using [Raylib-cs](https://github.com/ChrisDill/Raylib-cs).  
+This is a WIP sandbox-style project made for learning Raylib and prototyping basic platformer mechanics.  
+It’s raw, but playable.
 
 ---
 
 ## 🚀 Status
 
-⛏ **In Development** — currently implemented features:
-- [x] Basic player movement (left/right/jump)
-- [x] Gravity simulation
-- [x] Camera following player
-- [x] Floor and obstacle system
-- [x] Debug overlay (mouse/player position, FPS)
-- [x] Death and restart system
-- [x] Obstacle creation with mouse clicks (with console export)
+⛏ **In Development**  
+Implemented features so far:
 
-🔜 Planned features:
-- [ ] Improved collision and physics
-- [ ] Level system and progression
-- [ ] Animations and visual polish
-- [ ] UI & Menu system
-- [ ] Sound effects
-- [ ] Health / damage system
+- [x] Player movement (left / right / jump / drop)
+- [x] Basic gravity simulation
+- [x] Camera that follows the player
+- [x] Floor and obstacle rendering
+- [x] Collision detection with obstacles
+- [x] Player death + restart system
+- [x] Click-based obstacle creation (with console export)
+- [x] Debug overlay with FPS, mouse & player position
+
+🔮 Planned (maybe soon, maybe "eventually"):
+
+- [ ] Audio :)
 
 ---
 
 ## 🧠 Controls
 
-| Key         | Action                    |
-|-------------|----------------------------|
-| A / ←        | Move left                 |
-| D / →        | Move right                |
-| W / ↑ / Space| Jump                      |
-| S / ↓        | Drop down from platforms  |
-| Left Click   | Create obstacle (2 clicks)|
-| Right Click  | Print obstacles to console|
-| Restart      | Click button on screen after death |
+| Key / Mouse    | Action                             |
+|----------------|-------------------------------------|
+| A / ←          | Move left                           |
+| D / →          | Move right                          |
+| W / ↑ / Space  | Jump (only when grounded)           |
+| S / ↓          | Drop through platforms              |
+| Left Click     | Place obstacle (click twice)        |
+| Right Click    | Print placed obstacles to console   |
+| Mouse Hover    | Highlight Restart button (when dead)|
+| Mouse Click    | Restart the game after death        |
 
 ---
 
 ## 🛠️ Requirements
 
 - [.NET 6.0+](https://dotnet.microsoft.com/en-us/download)
-- [Raylib-cs](https://github.com/ChrisDill/Raylib-cs)
+- [Raylib-cs](https://www.nuget.org/packages/Raylib-cs)
 
-Recommended: Visual Studio 2022.
+Tested on **Visual Studio 2022**.
 
 ---
 
-## ⚙️ How to Build
+## ⚙️ How to Build / Run
 
 ```bash
-git clone https://github.com/your_username/CSimpleGame.git
-cd CSimpleGame
-dotnet build
+git clone https://github.com/McDjXdLol/DeadStart.git
+cd DeadStart
+dotnet restore
 dotnet run
 ```
 
 ---
 
+## 🧪 Debug Info
+The game displays a small debug panel in the top-left corner:
+
+- Player coordinates
+
+- Mouse coordinates
+
+- Current FPS
+
+Helpful when testing collisions or watching your game break in real time.
+
+---
+
+## 💡 Notes
+This project was built with learning in mind — low-level game mechanics using Raylib from scratch.
+There’s no game engine magic here. No Unity. No Unreal. Just rectangles, loops, and hope.
+
+Feel free to fork, build on top, or laugh at it. Contributions welcome (especially if you bring your own coffee).
+
+---
+
 ## 📄 License
 Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
+
+---
