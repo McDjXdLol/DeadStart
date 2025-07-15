@@ -31,7 +31,7 @@ class Program
 
     // Player coordinates
     private static int player_x = 0;
-    private static int player_y = WINDOW_HEIGHT/2;
+    private static int player_y = WINDOW_HEIGHT / 2;
 
     // Player settings
     private static readonly Color player_outline_color = Color.Blue;
@@ -41,6 +41,7 @@ class Program
     private static readonly int player_jumpforce = player_size + 20;
     private static bool player_alive = true;
     private static int player_deaths = 0;
+    private static int biggest_score = 0;
     private static Texture2D player_texture;
 
     // Camera
@@ -60,7 +61,7 @@ class Program
     {
         player_x += player_speed;
     }
-    
+
     // Main Gravity Function
     private static void Gravity()
     {
@@ -135,7 +136,7 @@ class Program
             RandomizeObstacles();
         }
     }
-    
+
     // Function that create Floors
     private static Rectangle Floor(float x, float y, int width, int height)
     {
@@ -212,13 +213,13 @@ class Program
     {
         // Draw Player
         player_rect = new Rectangle(player_x, player_y, player_size, player_size);
-        Raylib.DrawTextureEx(player_texture,new Vector2(player_x,player_y), 0f, 1f, Color.White);
+        Raylib.DrawTextureEx(player_texture, new Vector2(player_x, player_y), 0f, 1f, Color.White);
         DrawOutline();
     }
 
     // Function that draw obstacles
     private static void DrawObstacles()
-    { 
+    {
         // Drawing Obstacles
         foreach (Rectangle obstacle in obstacles)
         {
@@ -256,7 +257,8 @@ class Program
 
     private static void RandomizeObstacles()
     {
-        for (int i = 0; i < rnd.Next(50, 500); i++) {
+        for (int i = 0; i < rnd.Next(50, 500); i++)
+        {
             obstacles.Add(Obstacle(rnd.Next(50, 20000), 595, rnd.Next(3, 10), 10));
         }
     }
@@ -264,10 +266,11 @@ class Program
     public static void Main()
     {
         // Initialize window
-        Raylib.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Learn Raylib");
-
-        background_image = Raylib.LoadTexture("background.png");
-        player_texture = Raylib.LoadTexture("player.png");
+        Raylib.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "DeadStart");
+        Image icon = Raylib.LoadImage("textures/icon.png");
+        Raylib.SetWindowIcon(icon);
+        background_image = Raylib.LoadTexture("textures/background.png");
+        player_texture = Raylib.LoadTexture("textures/player.png");
 
         // Set FPS "Limit"
         Raylib.SetTargetFPS(60);
@@ -293,10 +296,9 @@ class Program
                 Floor(0, 600, 20000, 5)
             ];
 
-        // Obstacles List
+        // Predefined Obstacles List
         obstacles =
             [
-                Obstacle(9968, 596, 28, 12),
             ];
 
         // List of clicks/placed obstacles
@@ -310,6 +312,7 @@ class Program
             Raylib.BeginDrawing();
             Raylib.ClearBackground(window_background_color);
 
+            // Draw background
             Raylib.DrawTexture(background_image, 0, 0, Color.White);
             if (player_alive)
             {
@@ -327,7 +330,7 @@ class Program
                 DrawObstacles();
                 DrawPlayer();
 
-                Raylib.DrawText(""+player_deaths, 200, 400, 50, Color.Black);
+                Raylib.DrawText("" + player_deaths, 200, 400, 50, Color.Black);
 
                 // Other functions
                 ListenKeyboard();
@@ -340,7 +343,18 @@ class Program
 
                 // Draw stats/points
                 int points_width = Raylib.MeasureText("Points: " + (int)player_x / 100, 20);
-                Raylib.DrawText("Points: " + (int)player_x / 100, (WINDOW_WIDTH / 2) - (points_width/2), 10, 20, Color.Brown);
+                Raylib.DrawText("Points: " + (int)player_x / 100, (WINDOW_WIDTH / 2) - (points_width / 2), 10, 20, Color.Brown);
+
+                if (biggest_score > (int)player_x / 100)
+                {
+                    int record_width = Raylib.MeasureText("Record: " + biggest_score, 20);
+                    Raylib.DrawText("Record: " + biggest_score, (WINDOW_WIDTH / 2) - (record_width / 2), 40, 20, Color.Brown);
+                }
+                else
+                {
+                    int record_width = Raylib.MeasureText("Record: " + (int)player_x / 100, 20);
+                    Raylib.DrawText("Record: " + (int)player_x / 100, (WINDOW_WIDTH / 2) - (record_width / 2), 40, 20, Color.Brown);
+                }
 
                 // DrawDebug(clicked_points);
             }
@@ -348,7 +362,7 @@ class Program
             {
                 Color rest_butt_color = Color.SkyBlue;
                 restart_butt = new Rectangle((WINDOW_WIDTH / 2) - 100, (WINDOW_HEIGHT / 2) - 50, 200, 100);
-                
+
                 // Raylib.DrawLine(WINDOW_WIDTH / 2, 0, WINDOW_WIDTH / 2, WINDOW_HEIGHT, Color.Green);
                 // Raylib.DrawLine(0, WINDOW_HEIGHT / 2, WINDOW_WIDTH, WINDOW_HEIGHT / 2, Color.Green);
 
@@ -357,7 +371,8 @@ class Program
                     rest_butt_color = Color.Blue;
                     restart_butt.Position = new Vector2((WINDOW_WIDTH / 2) - 100, (WINDOW_HEIGHT / 2) - 53);
                     if (Raylib.IsMouseButtonPressed(MouseButton.Left))
-                    {   
+                    {
+                        biggest_score = Math.Max((int)player_x / 100, biggest_score);
                         player_x = 0;
                         player_y = WINDOW_HEIGHT / 2;
                         player_alive = true;
@@ -366,6 +381,7 @@ class Program
 
                 if (Raylib.IsKeyPressed(KeyboardKey.Enter) || Raylib.IsKeyPressed(KeyboardKey.KpEnter))
                 {
+                    biggest_score = Math.Max((int)player_x / 100, biggest_score);
                     player_x = 0;
                     player_y = WINDOW_HEIGHT / 2;
                     player_alive = true;
@@ -377,9 +393,12 @@ class Program
             // End
             Raylib.EndDrawing();
         }
+        // Exit
+        Raylib.UnloadImage(icon);
+        Raylib.UnloadTexture(player_texture);
         Raylib.UnloadTexture(background_image);
         Raylib.CloseWindow();
     }
 
-    
+
 }
