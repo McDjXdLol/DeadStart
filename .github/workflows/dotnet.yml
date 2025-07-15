@@ -19,10 +19,13 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Restore dependencies
-      run: dotnet restore ./DeadStart.csproj
+      run: dotnet restore DeadStart.csproj
+      working-directory: .
 
     - name: Build
-      run: dotnet build ./DeadStart.csproj --no-restore
+      run: dotnet build DeadStart.csproj --no-restore
+      working-directory: .
 
     - name: Test
-      run: dotnet test ./DeadStart.csproj --no-build --verbosity normal
+      run: dotnet test DeadStart.csproj --no-build --verbosity normal
+      working-directory: .
