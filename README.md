@@ -5,11 +5,6 @@ This is a work-in-progress sandbox project made for learning Raylib and testing 
 
 ---
 
-## 📸 Screenshot  
-*(To be added – currently a prototype with gray background and basic shapes)*
-
----
-
 ## 🚀 Status
 
 ⛏ **In Development** — currently implemented features:
@@ -50,7 +45,7 @@ This is a work-in-progress sandbox project made for learning Raylib and testing 
 - [.NET 6.0+](https://dotnet.microsoft.com/en-us/download)
 - [Raylib-cs](https://github.com/ChrisDill/Raylib-cs)
 
-Recommended: Visual Studio 2022+ or JetBrains Rider.
+Recommended: Visual Studio 2022.
 
 ---
 
@@ -65,28 +60,5 @@ dotnet run
 
 ---
 
-## 📁 Files to Track in Git
-
-Include:
-- `*.cs` – source code
-- `*.csproj`, `*.sln` – project files
-- `README.md`
-
-Ignore:
-- `bin/`, `obj/` – build artifacts
-- `.vs/`, `.vscode/` – IDE-specific files
-
-Use a proper `.gitignore`, for example:  
-[https://github.com/github/gitignore/blob/main/VisualStudio.gitignore](https://github.com/github/gitignore/blob/main/VisualStudio.gitignore)
-
----
-
-## 🤪 Easter Egg
-
-```csharp
-string test_text = "This is a test. A very important test... that tests your mental stability.";
-```
-
-See that? That’s your warning. Don’t click too hard. This game has no sanity meter. Yet.
-
----
+## 📄 License
+Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
