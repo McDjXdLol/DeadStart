@@ -32,12 +32,9 @@ Implemented features so far:
 |----------------|-------------------------------------|
 | A / ←          | Move left                           |
 | D / →          | Move right                          |
-| W / ↑ / Space  | Jump (only when grounded)           |
+| W / ↑ / Space  | Jump           |
 | S / ↓          | Drop through platforms              |
 | Left Click     | Place obstacle (click twice)        |
-| Right Click    | Print placed obstacles to console   |
-| Mouse Hover    | Highlight Restart button (when dead)|
-| Mouse Click    | Restart the game after death        |
 
 ---
 
@@ -58,19 +55,6 @@ cd DeadStart
 dotnet restore
 dotnet run
 ```
-
----
-
-## 🧪 Debug Info
-The game displays a small debug panel in the top-left corner:
-
-- Player coordinates
-
-- Mouse coordinates
-
-- Current FPS
-
-Helpful when testing collisions or watching your game break in real time.
 
 ---
 
