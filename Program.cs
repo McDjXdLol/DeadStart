@@ -4,10 +4,15 @@ using System.Numerics;
 class Program
 {
     // Window Settings
-    private static readonly int WINDOW_WIDTH = 1024;
-    private static readonly int WINDOW_HEIGHT = 576;
+    public static int WIDTH = 1024;
+    public static int HEIGHT = 576;
+
+    private static readonly int WINDOW_WIDTH = Math.Min(WIDTH, 1920);
+    private static readonly int WINDOW_HEIGHT = Math.Min(HEIGHT, 1080);
     private static readonly bool FULLSCREEN = false;
     private static readonly Color window_background_color = Color.Gray;
+    private static Texture2D background_image;
+
 
     // Fonts settings
     private static readonly int debug_font_size = 15;
@@ -29,14 +34,13 @@ class Program
     private static int player_y = WINDOW_HEIGHT/2;
 
     // Player settings
-    private static readonly Color player_color = Color.White;
-    private static readonly Color player_outline_color = Color.Green;
+    private static readonly Color player_outline_color = Color.Blue;
     private static readonly int player_size = 20;
+    private static Rectangle player_rect;
     private static readonly int player_speed = 4;
     private static readonly int player_jumpforce = player_size + 20;
     private static bool player_alive = true;
-
-    private static Rectangle player_rect;
+    private static Texture2D player_texture;
 
     // Camera
     private static Camera2D cam;
@@ -48,21 +52,24 @@ class Program
 
     // Other player variables
     private static bool touching_ground  = false;
+    private static Random rnd = new Random();
 
     // Function that moves player to the right
     private static void GravityRight()
     {
         player_x += player_speed;
     }
-
+    
     // Main Gravity Function
     private static void Gravity()
     {
         bool onAnyFloor = false;
 
+        Rectangle future_player_rect = new Rectangle(player_x, player_y + 3, player_size, player_size);
+
         foreach (Rectangle floor in floors!)
         {
-            if (Raylib.CheckCollisionRecs(floor, player_rect))
+            if (Raylib.CheckCollisionRecs(floor, future_player_rect))
             {
                 onAnyFloor = true;
                 break;
@@ -80,6 +87,8 @@ class Program
         }
 
     }
+
+    // Function that listens to keyboard keys
     private static void ListenKeyboard()
     {
         if (player_alive)
@@ -119,18 +128,27 @@ class Program
             }
         }
         // Others:
+        if (Raylib.IsKeyDown(KeyboardKey.F5))
+        {
+            obstacles.Clear();
+            RandomizeObstacles();
+        }
     }
+    
+    // Function that create Floors
     private static Rectangle Floor(float x, float y, int width, int height)
     {
         return new Rectangle(x, y, width, height);
     }
 
+    // Function that create Obstacles
     private static Rectangle Obstacle(float x, float y, float width, float height)
     {
         return new Rectangle(x, y, width, height);
     }
 
-    private static void CheckCollision()
+    // Function that checks if player is in collision with obstacle
+    private static void CheckPlayerDeathByCollision()
     {
         foreach (Rectangle obstacle in obstacles!)
         {
@@ -141,6 +159,7 @@ class Program
         }
     }
 
+    // Function that draw player outline
     private static void DrawOutline()
     {
         // Draw Player outline
@@ -154,6 +173,8 @@ class Program
         Raylib.DrawLine(player_x, player_y + player_size, player_x + player_size, player_y + player_size, player_outline_color);
 
     }
+
+    // Function to draw/show debug menu
     private static void DrawDebug(List<Vector2> clicked_points)
     {
         // Debug Info
@@ -183,18 +204,68 @@ class Program
             }
         }
     }
+
+    // Function that draw the player (with outline)
     private static void DrawPlayer()
     {
         // Draw Player
         player_rect = new Rectangle(player_x, player_y, player_size, player_size);
-        Raylib.DrawRectangleRec(player_rect, player_color);
+        Raylib.DrawTextureEx(player_texture,new Vector2(player_x,player_y), 0f, 1f, Color.White);
         DrawOutline();
+    }
+
+    // Function that draw obstacles
+    private static void DrawObstacles()
+    { 
+        // Drawing Obstacles
+        foreach (Rectangle obstacle in obstacles)
+        {
+            Raylib.DrawRectangleRec(obstacle, Color.Red);
+        }
+    }
+
+    // Function that draw floors
+    private static void DrawFloors()
+    {
+        // Drawing floors
+        foreach (Rectangle floor in floors!)
+        {
+            Raylib.DrawRectangleRec(floor, Color.Brown);
+        }
+    }
+
+    // Function that is used to draw obstacles on click
+    private static void ClickToDraw(List<Vector2> clicked_points)
+    {
+        if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+        {
+            Vector2 mouseInGame = Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), cam);
+            clicked_points.Add(mouseInGame);
+            for (int x = 0; x < clicked_points.Count; x += 2)
+            {
+                if (clicked_points.Count % 2 == 0)
+                {
+                    obstacles.Add(Obstacle(clicked_points[x].X, clicked_points[x].Y, (clicked_points[x + 1].X - clicked_points[x].X), (clicked_points[x + 1].Y - clicked_points[x].Y)));
+
+                }
+            }
+        }
+    }
+
+    private static void RandomizeObstacles()
+    {
+        for (int i = 0; i < rnd.Next(100, 1000); i++) {
+            obstacles.Add(Obstacle(rnd.Next(50, 20000), 595, rnd.Next(1, 15), 10));
+        }
     }
     [STAThread]
     public static void Main()
     {
         // Initialize window
         Raylib.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Learn Raylib");
+
+        background_image = Raylib.LoadTexture("background.png");
+        player_texture = Raylib.LoadTexture("player.png");
 
         // Set FPS "Limit"
         Raylib.SetTargetFPS(60);
@@ -214,9 +285,6 @@ class Program
             Zoom = 1f
         };
 
-        // Debug/Test Text
-        string test_text = "This is a test. A very important test. Not just any test, but a test that tests not only the camera system, but also the drawing capabilities, the font rendering, the pixel placement, the anti-aliasing (if any), the speed of text parsing, and the psychological endurance of any poor soul who dares to read through this absolute abomination of a paragraph, which, mind you, has no actual point, but rather exists solely for the purpose of being long, repetitive, verbose, and unnecessarily elaborate in a way that makes you question not only the sanity of the person who wrote it, but also the sanity of the person who decided to include it in the code, despite knowing full well that it serves no practical purpose other than to fill space, stress-test the UI layout, wrap lines like a burrito made of alphabet soup, and maybe, just maybe, make you laugh, or cry, or rage quit, or all three at once, because truly, deeply, fundamentally, there is nothing more soul-shattering than staring at a wall of endless, purposeless, meandering sentences that go on and on and on and on and on without ever reaching a point, conclusion, or meaningful piece of information, much like this one, which by now has already overstayed its welcome and yet somehow refuses to end, like a bad reboot of a movie franchise nobody asked for but still gets greenlit because some executive thinks 'eh, why not?', and so here we are, still reading, still going, still resisting the urge to Alt+F4 this entire experience, and yet, if you've come this far, if you're still reading, then congratulations, you've either got nerves of steel, nothing better to do, or you're just really, really invested in how badly a sentence can be abused in the name of testing camera text rendering logic in a framework designed for making games but currently being used to simulate the mental collapse of a developer trapped in an infinite loop of verbosity, verbosity, and yes, more verbosity.";
-
         // Floors List
         floors =
             [
@@ -232,7 +300,7 @@ class Program
         // List of clicks/placed obstacles
         List<Vector2> clicked_points = [];
 
-
+        RandomizeObstacles();
         // Main loop
         while (!Raylib.WindowShouldClose())
         {
@@ -240,6 +308,7 @@ class Program
             Raylib.BeginDrawing();
             Raylib.ClearBackground(window_background_color);
 
+            Raylib.DrawTexture(background_image, 0, 0, Color.White);
             if (player_alive)
             {
                 // Camera initialize
@@ -248,49 +317,28 @@ class Program
 
                 // Shown in camera
                 Raylib.BeginMode2D(cam);
-                if (Raylib.IsMouseButtonPressed(MouseButton.Left))
-                {
-                    Vector2 mouseInGame = Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), cam);
-                    clicked_points.Add(mouseInGame);
-                    for (int x = 0; x < clicked_points.Count; x += 2)
-                    {
-                        if (clicked_points.Count % 2 == 0)
-                        {
-                            obstacles.Add(Obstacle(clicked_points[x].X, clicked_points[x].Y, (clicked_points[x + 1].X - clicked_points[x].X), (clicked_points[x + 1].Y - clicked_points[x].Y)));
-                            
-                        }
-                    }
-                }
 
+                ClickToDraw(clicked_points);
+
+                // Draw Objects
+                DrawFloors();
+                DrawObstacles();
                 DrawPlayer();
-
-                // Draw Text
-                Raylib.DrawText(test_text, 0 / 4, 600, 25, Color.Lime);
-
-                // Drawing floors
-                foreach (Rectangle floor in floors)
-                {
-                    Raylib.DrawRectangleRec(floor, Color.Brown);
-                }
-
-                // Drawing Obstacles
-                foreach (Rectangle obstacle in obstacles)
-                {
-                    Raylib.DrawRectangleRec(obstacle, Color.Red);
-                }
 
                 // Other functions
                 ListenKeyboard();
                 GravityRight();
                 Gravity();
-                CheckCollision();
+                CheckPlayerDeathByCollision();
 
                 // Exiting "Camera Mode"
                 Raylib.EndMode2D();
 
+                // Draw stats/points
+                int points_width = Raylib.MeasureText("Points: " + (int)player_x / 100, 20);
+                Raylib.DrawText("Points: " + (int)player_x / 100, (WINDOW_WIDTH / 2) - (points_width/2), 10, 20, Color.Brown);
 
-
-                DrawDebug(clicked_points);
+                // DrawDebug(clicked_points);
             }
             else
             {
@@ -318,7 +366,7 @@ class Program
             // End
             Raylib.EndDrawing();
         }
-
+        Raylib.UnloadTexture(background_image);
         Raylib.CloseWindow();
     }
 
