@@ -40,6 +40,7 @@ class Program
     private static readonly int player_speed = 4;
     private static readonly int player_jumpforce = player_size + 20;
     private static bool player_alive = true;
+    private static int player_deaths = 0;
     private static Texture2D player_texture;
 
     // Camera
@@ -51,8 +52,8 @@ class Program
     private static List<Rectangle> obstacles = [];
 
     // Other player variables
-    private static bool touching_ground  = false;
-    private static Random rnd = new Random();
+    private static bool touching_ground = false;
+    private static readonly Random rnd = new();
 
     // Function that moves player to the right
     private static void GravityRight()
@@ -128,7 +129,7 @@ class Program
             }
         }
         // Others:
-        if (Raylib.IsKeyDown(KeyboardKey.F5))
+        if (Raylib.IsKeyPressed(KeyboardKey.F5))
         {
             obstacles.Clear();
             RandomizeObstacles();
@@ -155,6 +156,7 @@ class Program
             if (Raylib.CheckCollisionRecs(obstacle, player_rect))
             {
                 player_alive = false;
+                player_deaths++;
             }
         }
     }
@@ -254,8 +256,8 @@ class Program
 
     private static void RandomizeObstacles()
     {
-        for (int i = 0; i < rnd.Next(100, 1000); i++) {
-            obstacles.Add(Obstacle(rnd.Next(50, 20000), 595, rnd.Next(1, 15), 10));
+        for (int i = 0; i < rnd.Next(50, 500); i++) {
+            obstacles.Add(Obstacle(rnd.Next(50, 20000), 595, rnd.Next(3, 10), 10));
         }
     }
     [STAThread]
@@ -325,6 +327,8 @@ class Program
                 DrawObstacles();
                 DrawPlayer();
 
+                Raylib.DrawText(""+player_deaths, 200, 400, 50, Color.Black);
+
                 // Other functions
                 ListenKeyboard();
                 GravityRight();
@@ -358,6 +362,13 @@ class Program
                         player_y = WINDOW_HEIGHT / 2;
                         player_alive = true;
                     }
+                }
+
+                if (Raylib.IsKeyPressed(KeyboardKey.Enter) || Raylib.IsKeyPressed(KeyboardKey.KpEnter))
+                {
+                    player_x = 0;
+                    player_y = WINDOW_HEIGHT / 2;
+                    player_alive = true;
                 }
                 Raylib.DrawRectangleRec(restart_butt, rest_butt_color);
                 Raylib.DrawText("RESTART", (WINDOW_WIDTH / 2) - 60, (WINDOW_HEIGHT / 2) - 10, 25, Color.Black);
