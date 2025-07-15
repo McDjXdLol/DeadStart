@@ -40,7 +40,7 @@ Implemented features so far:
 
 ## 🛠️ Requirements
 
-- [.NET 6.0+](https://dotnet.microsoft.com/en-us/download)
+- [.NET 9.0+](https://dotnet.microsoft.com/en-us/download)
 - [Raylib-cs](https://www.nuget.org/packages/Raylib-cs)
 
 Tested on **Visual Studio 2022**.
