@@ -1,7 +1,7 @@
 # 🎮 DeadStart
 
 An experimental 2D platformer built in C# using [Raylib-cs](https://github.com/ChrisDill/Raylib-cs).  
-This is a WIP sandbox-style project made for learning Raylib and prototyping basic platformer mechanics.  
+This is a sandbox-style project made for learning Raylib and prototyping basic platformer mechanics.  
 It’s raw, but playable.
 
 ---
